@@ -144,10 +144,13 @@
             'success'
           ).then(result => {
             if (result.isConfirmed) {
-              location.href = 'login1.html'
+              location.href = 'login.html'
             }
           })
 
+        },
+        error: (err)=>{
+          console.log('khong hop le');
         }
       })
     }
