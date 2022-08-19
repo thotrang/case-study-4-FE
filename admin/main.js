@@ -10,30 +10,88 @@ function getProductList() {
         url: `${API_URL}/stores`,
         success: function (data) {
             totalProduct = data.length;
-            let html = '';
-            for (let i = 0; i < data.length; i++) {
-                html += `
-        <tr id="${data[i]._id}">
-            <td>${i + 1}</td>
-            <td>${data[i].name}</td>
-            <td>${data[i].address}</td>
-            <td>${data[i].userid}</td>
-            <td><img src="${API_URL}/${data[i].image}" alt=""></td>
-         
-           <td>
-        <button type="button" onclick="showUpdateForm('${data[i]._id}')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Update
-        </button>
-            
-            <td><button class="btn btn-danger" onclick="showConFirmDelete('${data[i]._id}')" )>Delete</button></td>
-        </tr>`
-
-            }
-            $('#products').html(html);
-
+            displayList(data)
         }
 
     })
+}
+
+function displayList(data) {
+
+    let html = '';
+    for (let i = 0; i < data.length; i++) {
+        html += `
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+                    <!-- Block2 -->
+                    <div class="block2">
+                    <div class="block2-pic hov-img0" >
+                    <img src="https://www.visa.com.vn/dam/VCOM/regional/ap/Marquees/marquee-destinations-paris-640x640.jpg" alt="">
+                    <span class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" onclick="getProduct('${data[i]._id}')">
+                    Quick View
+                    </span>
+                    </div>
+                    <div class="block2-txt flex-w flex-t p-t-14">
+                    
+                    <div class="block2-txt-child1 flex-col-l ">
+                     
+                    <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                    
+                    ${data[i].name}
+                    
+                    </a>
+                    
+                    
+                    <span class="stext-105 cl3">
+                    
+                    $16.64
+                    
+                    </span>
+                    
+                    </div>
+                    
+                    
+                    <div class="block2-txt-child2 flex-r p-t-3">
+                    
+                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                    
+                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
+                    
+                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+                    
+                    </a>
+                    
+                    </div>
+                    
+                    </div>
+                    </div>
+                    </div>
+                `
+
+    }
+    $('#showProduct').html(html);
+}
+
+function searchProduct() {
+    let name = $('#nameSearch').val();
+    $.ajax({
+        type: 'GET',
+        url: `${API_URL}/stores/search?name=${name}`,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        success: function (data) {
+            // console.log(data)
+            displayList(data)
+
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            // alert(xhr.status);
+            Swal.fire('product not exist')
+        }
+
+    })
+
+
 }
 
 function showConFirmDelete(id) {
@@ -151,7 +209,7 @@ function updateProduct(id) {
         url: `${API_URL}/stores/${id}`,
         data: JSON.stringify(product),
         headers: {
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
         },
         success: function (data) {
             let html = `<tr id="${data._id}">
@@ -181,58 +239,17 @@ function updateProduct(id) {
 
 
 function getProduct(id) {
+    alert(id)
     $.ajax({
         type: 'GET',
         url: `${API_URL}/stores/detail/${id}`,
         success: function (data) {
+            console.log(data)
             $('#name').val(data.name);
             $('#address').val(data.address);
             $('#userid').val(data.userid);
             $('#image').val(data.image);
         }
     })
-}
-
-
-function searchProduct(){
-    let name = $('#nameSearch').val();
-    $.ajax({
-        type: 'GET',
-        url: `${API_URL}/stores/search?name=${name}`,
-        headers: {
-            "Content-Type":"application/json"
-        },
-        success: function (data){
-            console.log(data)
-            totalProduct = data.length;
-            let html = '';
-            for (let i = 0; i < data.length; i++) {
-                html += `
-        <tr id="${data[i]._id}">
-            <td>${i + 1}</td>
-            <td>${data[i].name}</td>
-            <td>${data[i].address}</td>
-            <td>${data[i].userid}</td>
-            <td><img src="${API_URL}/${data[i].image}" alt=""></td>
-         
-           <td>
-        <button type="button" onclick="showUpdateForm('${data[i]._id}')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Update
-        </button>
-            
-            <td><button class="btn btn-danger" onclick="showConFirmDelete('${data[i]._id}')" )>Delete</button></td>
-        </tr>`
-
-            }
-            $('#products').html(html);
-
-        },
-        error : function(xhr, ajaxOptions, thrownError){
-            // alert(xhr.status);
-            Swal.fire('product not exist')
-        }
-
-    })
-
 
 }
