@@ -15,8 +15,9 @@ function getProductList() {
         headers: {
             'Authorization': 'Bearer ' + token.token
         },
-        url: `${API_URL}/stores`,
+        url: `${API_URL}/products`,
         success: function (data) {
+            console.log(data)
             totalProduct = data.length;
             displayList(data)
         }
@@ -277,29 +278,42 @@ function updateProduct(id) {
     })
 }
 
-
-function getProduct(id) {
-    location.href = ("../cozastore-master/product-detail.html")
+function a() {
+    let id = localStorage.getItem('id-product')
     $.ajax({
         type: 'GET',
         headers: {
             "Content-Type": "application/json",
             'Authorization': 'Bearer ' + token.token
         },
-        url: `${API_URL}/stores/detail/${id}`,
+        url: `${API_URL}/products/${id}`,
         success: function (data) {
             console.log(data)
-            $('#name').val(data.name);
-            $('#address').val(data.address);
-            $('#userid').val(data.userid);
-            $('#image').val(data.image);
-            displayList(data)
+//             console.log(2)
+//             $('#name').val(data.name);
+//             $('#address').val(data.address);
+//             $('#userid').val(data.userid);
+//             $('#image').val(data.image);
+//             let html = '';
+//             html += `<div class="wrap-pic-w pos-relative">
+// <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT">
+//
+// <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
+// <i class="fa fa-expand"></i>
+// </a>
+// </div>`
+//             $('#img1').html(html)
+
         }
     })
-
 }
 
-function addToCart(){
+function getProduct(id) {
+    localStorage.setItem('id-product', id);
+    location.href = ("../cozastore-master/product-detail.html")
+}
+
+function addToCart() {
     let user = $('#user').val();
     let items = $('#items').val();
     let status = $('#status').val();
