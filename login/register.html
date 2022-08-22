@@ -9,7 +9,9 @@
   <!-- CSS only -->
   <link rel="stylesheet" href="../assets/lib/sweetalert2.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+ <!-- link script firebase-->
+ 
 </head>
 
 <body>
@@ -29,7 +31,7 @@
                     <div class="d-flex flex-row align-items-center mb-4">
                       <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="name">Name</label>
+                        <label class="form-label" for="form3Example1c">Name</label>
                         <input type="text" class="form-control" id="name" required />
                       </div>
                     </div>
@@ -37,7 +39,7 @@
                     <div class="d-flex flex-row align-items-center mb-4">
                       <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="username">Username</label>
+                        <label class="form-label" for="form3Example3c">Username</label>
                         <input type="text" class="form-control" id="username" required />
                       </div>
                     </div>
@@ -45,23 +47,15 @@
                     <div class="d-flex flex-row align-items-center mb-4">
                       <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="email">Email</label>
+                        <label class="form-label" for="form3Example3c">Email</label>
                         <input type="email" class="form-control" id="email" required />
-                      </div>
-                    </div>
-
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="avatar">Avatar</label>
-                        <input type="text" class="form-control" id="avatar" required />
                       </div>
                     </div>
 
                     <div class="d-flex flex-row align-items-center mb-4">
                       <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="password">Password</label>
+                        <label class="form-label" for="form3Example4c">Password</label>
                         <input type="password" class="form-control" id="password" required />
                       </div>
                     </div>
@@ -69,8 +63,8 @@
                     <div class="d-flex flex-row align-items-center mb-4">
                       <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                       <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="rePassword">Repeat your password</label>
-                        <input type="password" class="form-control" id="rePassword" required />
+                        <label class="form-label" for="form3Example4cd">Repeat your password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required />
                       </div>
                     </div>
 
@@ -80,7 +74,7 @@
                       <button type="button" class="btn btn-primary btn-lg" onclick="register()">Register</button>
                     </div>
                     <div class="form-check d-flex justify-content-center mb-5">
-                      <label class="form-check-label" >
+                      <label class="form-check-label" for="form2Example3">
                         Have already an account? <a href="login.html">Login here</a>
                       </label>
                     </div>
@@ -102,55 +96,68 @@
     </div>
   </section>
   <!-- JavaScript Bundle with Popper -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-  <script src="../assets/lib/sweetalert2.js"></script>
-  <script>
-    function register() {
+  <!-- <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-storage.js"></script> -->
+ <script>
+ 
+  function register() {
       let name = $('#name').val();
-      let avatar = $('#avatar').val();
       let username = $('#username').val();
       let password = $('#password').val();
-      let rePassword = $('#rePassword').val();
-      let email = $('#email').val();
-      let user = {
-        name: name,
-        avatar: avatar,
-        username: username,
-        password: password,
-        rePassword: rePassword,
-        email: email
-      }
-      $.ajax({
-        type: 'POST',
-        url: 'http://localhost:3000/register',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(user),
-        success: function() {
-          $('#username').val('');
-          $('#password').val('');
-          $('#name').val('');
-          $('#avatar').val('');
-          $('#rePassword').val('');
-          $('#email').val();
+      let address = $('#password').val();
+      let confirmPassword = $('#confirmPassword').val()
+      let regexPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      let email = $('#email').val()
 
-          Swal.fire(
-            'Register!',
-            'Register success!',
-            'success'
-          ).then(result => {
-            if (result.isConfirmed) {
-              location.href = 'login.html'
+          if (name || username || password || address || email) {
+            if (regexPassword.test(password)) {
+
+              if (password == confirmPassword) {
+                let user = {
+                  name: name,
+                  avatar: '',
+                  username: username,
+                  password: password,
+                  address: address,
+                  email: email
+                };
+                $.ajax({
+                  type: 'POST',
+                  url: 'http://localhost:3000/register',
+                  headers: {
+
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  data: JSON.stringify(user),
+                  success: function() {
+                    Swal.fire(
+                      'Register!',
+                      'Register success!',
+                      'success'
+                    ).then(result => {
+                      if (result.isConfirmed) {
+                        location.href = 'login.html'
+                      }
+                    })
+
+                  },
+                  error: (err) => {
+                    Swal.fire("Tên đăng nhập đã tồn tại")
+                  }
+                })
+              } else {
+                Swal.fire('Nhập lại mật khẩu không chuẩn')
+              }
+            } else {
+              Swal.fire('mat khau khong dung dinh dang')
             }
-          })
-
-        },
-        error: (err)=>{
-          console.log('khong hop le');
-        }
-      })
+          } else {
+            Swal.fire('Vui lòng điền đầy đủ thông tin')
+          }
     }
   </script>
 </body>

@@ -39,13 +39,13 @@ function getProductList() {
             totalProduct = data.length;
             let html = '';
             for (let i = 0; i < data.length; i++) {
-                console.log(data[i].category[0].name);
+                console.log(data[i].image)
                 html += `<tr id="${data[i]._id}">
                     <td>${i + 1}</td>
                     <td>${data[i].name}</td>
                     <td>${data[i].price}</td>
                     <td>${data[i].amount}</td>
-                    <td><img src="${API_URL}/${data[i].image}" alt=""></td>
+                    <td><img src="${data[i].image}" alt="" width="38" height="36"></td>
                     <td>${data[i].category ? data[i].category[0].name : ''}</td>
                     <td>
                     <button type="button" onclick="showUpdateForm('${data[i]._id}')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -110,28 +110,54 @@ function createProduct() {
     let image = $('#image').val();
     let description = $('#description').val();
     let categoryId = $('#category').val();
-    let product = {
-        name: name,
-        price: price,
-        amount: amount,
-        image: image,
-        description: description,
-        category: {
-            _id: categoryId
-        }
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHVJ3RokpI5aQ_NDuzqGCMJDnX8MvQIus",
+        authDomain: "case4-6dbf8.firebaseapp.com",
+        projectId: "case4-6dbf8",
+        storageBucket: "case4-6dbf8.appspot.com",
+        messagingSenderId: "1068828921653",
+        appId: "1:1068828921653:web:e92849f20febb73825867c",
+        measurementId: "G-T3589W1X49"
     };
-    $.ajax({
-        type: 'POST',
-        url: `${API_URL}/user/products`,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token.token
-        },
-        data: JSON.stringify(product),
-        success: function (data) {
-            console.log(data)
-            totalProduct++;
-            let html = `<tr id="${data._id}">
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    console.log(firebase);
+    const ref = firebase.storage().ref();
+    const file = document.querySelector("#image").files[0];
+    const nameImage = +new Date() + "-" + file.name;
+    const metadata = {
+        contentType: file.type
+    };
+    const task = ref.child(nameImage).put(file, metadata);
+    task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+
+            let product = {
+                name: name,
+                price: price,
+                amount: amount,
+                image: url,
+                description: description,
+                category: {
+                    _id: categoryId
+                }
+            }
+            console.log(product);
+
+            $.ajax({
+                type: 'POST',
+                url: `${API_URL}/user/products`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token.token
+                },
+                data: JSON.stringify(product),
+                success: function (data) {
+                    console.log(data)
+                    totalProduct++;
+                    let html = `<tr id="${data._id}">
         <td>${totalProduct}</td>
         <td>${data.name}</td>
         <td>${data.price}</td>
@@ -145,10 +171,12 @@ function createProduct() {
         </td>
         <td><button class="btn btn-danger" onclick="showConfirmDelete('${data._id}')">Delete</button></td>
     </tr>`
-            $('#products').append(html);
-            resetForm();
-        }
-    })
+                    $('#products').append(html);
+                    resetForm();
+                }
+            })
+        })
+
 }
 
 function showCreateForm() {
@@ -161,6 +189,7 @@ function showCreateForm() {
 }
 
 function showUpdateForm(id) {
+    drawCategorySelectOption();
     let html = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" onclick="updateProduct('${id}')">Update</button>`
     $('#title').html('Update Product');
@@ -174,33 +203,57 @@ function updateProduct(id) {
     let amount = $('#amount').val();
     let image = $('#image').val();
     let description = $('#description').val();
-    let cateId = $('#category').val();
-    let product = {
-        name: name,
-        price: price,
-        amount: amount,
-        image: image,
-        description: description,
-        category: {
-            _id: cateId
-        }
+    let categoryId = $('#category').val();
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHVJ3RokpI5aQ_NDuzqGCMJDnX8MvQIus",
+        authDomain: "case4-6dbf8.firebaseapp.com",
+        projectId: "case4-6dbf8",
+        storageBucket: "case4-6dbf8.appspot.com",
+        messagingSenderId: "1068828921653",
+        appId: "1:1068828921653:web:e92849f20febb73825867c",
+        measurementId: "G-T3589W1X49"
     };
-    $.ajax({
-        type: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token.token
-        },
-        url: `${API_URL}/user/products/${id}`,
-        data: JSON.stringify(product),
-        success: function (data) {
-            let html = `<tr id="${data._id}">
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    console.log(firebase);
+    const ref = firebase.storage().ref();
+    const file = document.querySelector("#image").files[0];
+    const nameImage = +new Date() + "-" + file.name;
+    const metadata = {
+        contentType: file.type
+    };
+    const task = ref.child(nameImage).put(file, metadata);
+    task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+
+
+            let product = {
+                name: name,
+                price: price,
+                amount: amount,
+                image: url,
+                description: description,
+                category: {
+                    _id: categoryId
+                }
+            };
+            $.ajax({
+                type: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token.token
+                },
+                url: `${API_URL}/user/products/${id}`,
+                data: JSON.stringify(product),
+                success: function (data) {
+                    let html = `<tr id="${data._id}">
         <td>${totalProduct}</td>
         <td>${data.name}</td>
         <td>${data.price}</td>
         <td>${data.amount}</td>
         <td><img src="${API_URL}/${data.image}" alt=""></td>
-        <td>${data.category ? data.category.name : ''}</td>
+        <td>${data.category ? data.category[0].name : ''}</td>
         <td>
         <button type="button" onclick="showUpdateForm('${data._id}')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Update
@@ -208,14 +261,15 @@ function updateProduct(id) {
         </td>
         <td><button class="btn btn-danger" onclick="showConfirmDelete('${data._id}')">Delete</button></td>
     </tr>`
-            $(`#${id}`).replaceWith(html);
-            Swal.fire(
-                'Updated!',
-                'Product has been updated.',
-                'success'
-            )
-        }
-    })
+                    $(`#${id}`).replaceWith(html);
+                    Swal.fire(
+                        'Updated!',
+                        'Product has been updated.',
+                        'success'
+                    )
+                }
+            })
+        })
 }
 
 function getProduct(id) {
