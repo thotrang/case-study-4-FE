@@ -34,7 +34,7 @@ function displayList(data) {
                     <!-- Block2 -->
                     <div class="block2">
                     <div class="block2-pic hov-img0" >
-                    <img src="https://www.visa.com.vn/dam/VCOM/regional/ap/Marquees/marquee-destinations-paris-640x640.jpg" alt="">
+                    <img src="${data[i].image}" alt="">
                     <span class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" onclick="getProduct('${data[i]._id}')">
                     Quick View
                     </span>
@@ -288,21 +288,11 @@ function a() {
         },
         url: `${API_URL}/products/${id}`,
         success: function (data) {
+            document.getElementById('name1').innerHTML = data.name;
+            document.getElementById('price1').innerHTML = data.price;
+            document.getElementById('description1').innerHTML =data.description;
+            document.getElementById('imgQuan').src = data.image;
             console.log(data)
-//             console.log(2)
-//             $('#name').val(data.name);
-//             $('#address').val(data.address);
-//             $('#userid').val(data.userid);
-//             $('#image').val(data.image);
-//             let html = '';
-//             html += `<div class="wrap-pic-w pos-relative">
-// <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT">
-//
-// <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
-// <i class="fa fa-expand"></i>
-// </a>
-// </div>`
-//             $('#img1').html(html)
 
         }
     })
@@ -314,20 +304,28 @@ function getProduct(id) {
 }
 
 function addToCart() {
-    let user = $('#user').val();
-    let items = $('#items').val();
-    let status = $('#status').val();
     let cart = {
-        user: user,
-        items: [],
-        status: status
+        items: [{
+            price: 1,
+            amount: 1,
+            product: '6300f029b7cbcb8923de595c'
+        }]
     };
-
+    console.log(cart)
     $.ajax({
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token.token
+        },
         type: 'POST',
-        url: `${API_URL}/carts`,
+        url: `${API_URL}/carts?user_id=${token.id}`,
+        data: JSON.stringify(cart),
+        success: function (data) {
+            console.log(data)
+        }
 
     })
+
 
 
 }
