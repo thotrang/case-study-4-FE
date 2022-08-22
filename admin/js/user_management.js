@@ -35,7 +35,7 @@ function getUserList() {
             for (let i = 0; i < data.length; i++) {
                 body += `<tr id="${data[i]._id}">
         <td>${i + 1}</td>
-        <td><img src="${data[i].avatar}" alt="table-user" class="mr-2 rounded-circle">
+        <td><img width="45px" src="${data[i].avatar}" alt="table-user" class="mr-2 rounded-circle">
         <a href="#" class="text-body font-weight-semibold" onclick="getUser('${data[i]._id}')">${data[i].name}</a>
         </td>
         <td>${data[i].username}</td>
@@ -101,10 +101,7 @@ function getUser(id) {
             <div class="card-box">
                 <div class="row">
                     <div class="col-lg-5">
-
-                       
-
-                        
+                    <img width="400px" heigth="400px" src="${data.avatar}" alt="">
                     </div> <!-- end col -->
                     <div class="col-lg-7">
                         <div class="pl-xl-3 mt-3 mt-xl-0">
@@ -175,7 +172,7 @@ function lockUser(id) {
                 'success'
             )
             $(`#lock`).html(`${(data.status === 1) ? `<button type="button" class="btn btn-danger mr-2" onclick = "showConfirmLockUser('${data._id}')" >Block</button>` :
-            `<button  type="button" class="btn btn-success waves-effect waves-light" onclick = "unLockUser('${data._id}')">UnLock</button>`}`);
+                `<button  type="button" class="btn btn-success waves-effect waves-light" onclick = "unLockUser('${data._id}')">UnLock</button>`}`);
         }
     })
 }
@@ -196,13 +193,12 @@ function unLockUser(id) {
                 'success'
             )
             $('#lock').html(`${(data.status === 1) ? `<button type="button" class="btn btn-danger mr-2" onclick = "showConfirmLockUser('${data._id}')" >Block</button>` :
-            `<button  type="button" class="btn btn-success waves-effect waves-light" onclick = "unLockUser('${data._id}')">UnLock</button>`}`)
+                `<button  type="button" class="btn btn-success waves-effect waves-light" onclick = "unLockUser('${data._id}')">UnLock</button>`}`)
 
         }
     })
 }
 function getSellerList() {
-    console.log('ok');
     $.ajax({
         type: 'GET',
         headers: {
@@ -245,5 +241,66 @@ function getSellerList() {
             $('#title').html(title);
             $('#body').html(body);
         }
+    })
+}
+
+function getMyProfile() {
+    $.ajax({
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token.token
+        },
+        url: `${API_URL}/admin/myProfile`,
+        success: function (data) {
+            let title = 'My Profile';
+            let edit = 'Edit MyProfile';
+            let body = `<div class="col-12">
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-lg-5">
+                    <img width="400px" heigth="400px" src="${data.avatar}" alt="">
+                    </div> <!-- end col -->
+                    <div class="col-lg-7">
+                        <div class="pl-xl-3 mt-3 mt-xl-0">
+                            <a href="#" class="text-primary">${data.store}</a>
+                            <h4 class="mb-3">${data.name}</h4>
+                            <p class="text-muted float-left mr-3">
+                                <span class="mdi mdi-star text-warning"></span>
+                                <span class="mdi mdi-star text-warning"></span>
+                                <span class="mdi mdi-star text-warning"></span>
+                                <span class="mdi mdi-star text-warning"></span>
+                                <span class="mdi mdi-star"></span>
+                            </p>
+                            <p class="mb-4"><a href="" class="text-muted">( 36 Customer Reviews )</a></p>
+                            <h6 class="text-danger text-uppercase">20 % Off</h6>
+                            <h4 class="mb-4">Price : <span class="text-muted mr-2"><del>${data.price}</del></span> <b>${data.price}</b></h4>
+                            <h4><span class="badge bg-soft-success text-success mb-4">Instock</span></h4>
+                            <p class="text-muted mb-4">${data.description}</p>
+                           
+                        </div>
+                    </div> <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div> <!-- end card-->
+        </div>`;
+            let update = `<button type="submit" class="btn btn-success waves-effect waves-light" onclick="update('${data._id}')">Save</button>
+        <button type="button" class="btn btn-danger waves-effect waves-light" data-dismiss="modal">Exit</button>`
+            $('#title').html(title);
+            $('#body').html(body);
+            $('#update').html(update);
+            $('#editHTML').html(edit);
+        }
+    })
+}
+function update(id) {
+    
+    $.ajax({
+        type: "PUT",
+        url: `http://localhost:3000/admin/user/${id}`,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(user),
     })
 }
