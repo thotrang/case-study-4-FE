@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+// const API_URL = "http://localhost:3000";
 let totalProduct = 0;
 $(function () {
     getProductList();
@@ -151,7 +151,7 @@ function updateProduct(id) {
         url: `${API_URL}/stores/${id}`,
         data: JSON.stringify(product),
         headers: {
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
         },
         success: function (data) {
             let html = `<tr id="${data._id}">
@@ -194,15 +194,15 @@ function getProduct(id) {
 }
 
 
-function searchProduct(){
+function searchProduct() {
     let name = $('#nameSearch').val();
     $.ajax({
         type: 'GET',
         url: `${API_URL}/stores/search?name=${name}`,
         headers: {
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
         },
-        success: function (data){
+        success: function (data) {
             console.log(data)
             totalProduct = data.length;
             let html = '';
@@ -227,12 +227,55 @@ function searchProduct(){
             $('#products').html(html);
 
         },
-        error : function(xhr, ajaxOptions, thrownError){
+        error: function (xhr, ajaxOptions, thrownError) {
             // alert(xhr.status);
             Swal.fire('product not exist')
         }
 
     })
 
+}
+
+function findProductOnCategory(_id) {
+    $.ajax({
+        type: 'GET',
+        url: `${API_URL}/products/${_id}`,
+        success: function (product) {
+            console.log(product)
+            let array = product.length
+            let html = '';
+            for (let i = 0; i < array; i++) {
+                html += `
+                    <div class="block2">
+						<div class="block2-pic hov-img0">
+							<img src=${product[i].image} alt="IMG-PRODUCT">
+							<button class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+								Quick view
+							</button>
+						</div>
+						<div class="block2-txt flex-w flex-t p-t-14">
+							<div class="block2-txt-child1 flex-col-l ">
+								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+									${product[i].name}
+								</a>
+
+								<span class="stext-105 cl3">
+									$${product[i].price}
+								</span>
+							</div>
+						</div>
+					</div>`;
+                console.log(html)
+                $('#findCategory').html(html)
+            }
+
+        },
+        error: function(err){
+            console.log(err)
+        }
+    })
+}
+
+function SortProduct(products) {
 
 }
