@@ -4,7 +4,6 @@ if (!token) {
     location.href = '../login/login.html'
 } else {
     $(function () {
-
         getUserList();
     })
 }
@@ -97,6 +96,7 @@ function getUser(id) {
         },
         success: function (data) {
             let title = 'User Profile';
+            let edit = 'Edit MyProfile';
             let body = `<div class="col-12">
             <div class="card-box">
                 <div class="row">
@@ -130,14 +130,14 @@ function getUser(id) {
                     </div> <!-- end col -->
                 </div>
                 <!-- end row -->
-
-
-                
-
             </div> <!-- end card-->
         </div>`;
+            let update = `<button type="submit" class="btn btn-success waves-effect waves-light" onclick="update('${data._id}')">Save</button>
+        <button type="button" class="btn btn-danger waves-effect waves-light" data-dismiss="modal">Exit</button>`
             $('#title').html(title);
             $('#body').html(body);
+            $('#update').html(update);
+            $('#editHTML').html(edit);
         }
     })
 }
@@ -232,7 +232,7 @@ function getSellerList() {
         <td>${data[i].address}</td>
         <td>${(data[i].status === 1) ? '<span class="badge bg-soft-success text-success">Active</span>' : '<span class="badge bg-soft-danger text-danger">Blocked</span>'}</td>
         <td>
-        <a href="#" onclick = "updateUser('${data[i]._id}')" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
+        <a href="#" onclick = "updateUser('${data[i]._id}')" class="action-icon"> <i class="mdi mdi-square-edit-outline" data-dismiss="modal"></i></a>
         <a href="#" onclick = "showConfirmDelete('${data[i]._id}')" class="action-icon"> <i class="mdi mdi-delete"></i></a>
       </td>
     </tr>`
@@ -283,7 +283,7 @@ function getMyProfile() {
                 <!-- end row -->
             </div> <!-- end card-->
         </div>`;
-            let update = `<button type="submit" class="btn btn-success waves-effect waves-light" onclick="update('${data._id}')">Save</button>
+            let update = `<button type="submit" class="btn btn-success waves-effect waves-light" onclick="update('${data._id}')" data-dismiss="modal">Save</button>
         <button type="button" class="btn btn-danger waves-effect waves-light" data-dismiss="modal">Exit</button>`
             $('#title').html(title);
             $('#body').html(body);
@@ -293,14 +293,96 @@ function getMyProfile() {
     })
 }
 function update(id) {
-    
+
+    let name = $('#name').val();
+    let email = $('#email').val();
+    let address = $('#address').val();
+    let avatar = $('#avatar').val();
+    let password = $('#password').val()
+
+    // const firebaseConfig = {
+    //     apiKey: "AIzaSyCHVJ3RokpI5aQ_NDuzqGCMJDnX8MvQIus",
+    //     authDomain: "case4-6dbf8.firebaseapp.com",
+    //     projectId: "case4-6dbf8",
+    //     storageBucket: "case4-6dbf8.appspot.com",
+    //     messagingSenderId: "1068828921653",
+    //     appId: "1:1068828921653:web:e92849f20febb73825867c",
+    //     measurementId: "G-T3589W1X49"
+    // };
+    // // Initialize Firebase
+    // firebase.initializeApp(firebaseConfig);
+    // console.log(firebase);
+    // const ref = firebase.storage().ref();
+    // const file = document.querySelector("#avatar").files[0];
+    // const nameImage = +new Date() + "-" + file.name;
+    // const metadata = {
+    //     contentType: file.type
+    // };
+    // const task = ref.child(nameImage).put(file, metadata);
+    // task
+    //     .then(snapshot => snapshot.ref.getDownloadURL())
+    //     .then(url => {
+
+    let updateUser = {
+        name: name,
+        email: email,
+        address: address,
+        avatar: avatar,
+        password: password
+    }
+    console.log('ok');
     $.ajax({
+
         type: "PUT",
-        url: `http://localhost:3000/admin/user/${id}`,
+        url: `${API_URL}/admin/users/${id}`,
         headers: {
+            'Authorization': 'Bearer ' + token.token,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        data: JSON.stringify(user),
+        data: JSON.stringify(updateUser),
+
+        success: function (data) {
+            let body = `<div class="col-12">
+                    <div class="card-box">
+                        <div class="row">
+                            <div class="col-lg-5">
+                            <img width="400px" heigth="400px" src="${data.avatar}" alt="">
+                            </div> <!-- end col -->
+                            <div class="col-lg-7">
+                                <div class="pl-xl-3 mt-3 mt-xl-0">
+                                    <a href="#" class="text-primary">${data.store}</a>
+                                    <h4 class="mb-3">${data.name}</h4>
+                                    <p class="text-muted float-left mr-3">
+                                        <span class="mdi mdi-star text-warning"></span>
+                                        <span class="mdi mdi-star text-warning"></span>
+                                        <span class="mdi mdi-star text-warning"></span>
+                                        <span class="mdi mdi-star text-warning"></span>
+                                        <span class="mdi mdi-star"></span>
+                                    </p>
+                                    <p class="mb-4"><a href="" class="text-muted">( 36 Customer Reviews )</a></p>
+                                    <h6 class="text-danger text-uppercase">20 % Off</h6>
+                                    <h4 class="mb-4">Price : <span class="text-muted mr-2"><del>${data.price}</del></span> <b>${data.price}</b></h4>
+                                    <h4><span class="badge bg-soft-success text-success mb-4">Instock</span></h4>
+                                    <p class="text-muted mb-4">${data.description}</p>
+                                   
+                                </div>
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div> <!-- end card-->
+                </div>`
+            $('#body').html(body);
+            Swal.fire(
+                'Edit MyProfile!',
+                'Accout has been Edit.',
+                'success'
+            )
+        }
     })
+
+    // })
+    // .catch(console.error);
+
+
 }
