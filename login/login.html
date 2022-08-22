@@ -93,13 +93,14 @@
 
           for (let i = 0; i < role.length; i++) {
             if (role[i].name == 'admin') {
-              return location.href = '../user/index.html';
+              return location.href = '../admin/home.html';
             }
           }
           location.href = '../user/index.html';
         },
         error: (err) => {
-          alert('khong the dang nhap')
+          Swal.fire(err.responseJSON.message)
+
         }
       })
     }
