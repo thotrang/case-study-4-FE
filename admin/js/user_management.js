@@ -121,9 +121,10 @@ function getUser(id) {
                            
                             <div>
                             <a id="lock"> ${(data.status === 1) ? `<button type="button" class="btn btn-danger mr-2" onclick = "showConfirmLockUser('${data._id}')" >Block</button>` :
-                    `<button  type="button" class="btn btn-success waves-effect waves-light" onclick = "unLockUser('${data._id}')">UnLock</button>`}<a>
+                    `<button  type="button" class="btn btn-success waves-effect waves-light" onclick = "unLockUser('${data._id}')">UnLock</button>`}</a>
                              
-                            ${data.store ? '<button type="button" class="btn btn-success waves-effect waves-light">View Store</button>' : ''}                            
+                    <a id="seller">${(data.role.length > 1)? `<button type="button" class="btn btn-success waves-effect waves-light" onclick= "showConfirmDeleteSeller('${data._id}')">Delete Seller</button>` :
+                    `<button type="button" class="btn btn-success waves-effect waves-light" onclick = "showConfirmAddSeller('${data._id}')">Add Seller </button>`}  </a>                          
                             </div>
                         </div>
                     </div> <!-- end col -->
@@ -378,6 +379,77 @@ function update(id) {
 
         })
         .catch(console.error);
+}
+function showConfirmAddSeller(id) {
+    console.log('ok');
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Add Seller!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            addSeller(id);
+        }
+    })
+}
+function addSeller(id) {
+    console.log('ok');
+    $.ajax({
+        type: "PUT",
+        headers: {
+            'Authorization': 'Bearer ' + token.token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        url: `${API_URL}/admin/users/addSeller/${id}`,
+        success: function (data) {
+            Swal.fire(
+                'Add Seller!',
+                'Accout has been Seller.',
+                'success'
+            )
+            $(`#seller`).html(`${(data.role.length > 1)? `<button type="button" class="btn btn-success waves-effect waves-light" onclick= "showConfirmDeleteSeller('${data._id}')">Delete Seller</button>` :
+            `<button type="button" class="btn btn-success waves-effect waves-light" onclick = "showConfirmAddSeller('${data._id}')">Add Seller </button>`} `);
+        }
+    })
+}
 
-
+function showConfirmDeleteSeller(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Delete Seller!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteSeller(id);
+        }
+    })
+}
+function deleteSeller(id) {
+    $.ajax({
+        type: "PUT",
+        headers: {
+            'Authorization': 'Bearer ' + token.token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        url: `${API_URL}/admin/users/deleteSeller/${id}`,
+        success: function (data) {
+            Swal.fire(
+                'Delete Seller!',
+                'Accout has been User.',
+                'success'
+            )
+            $(`#seller`).html(`${(data.role.length > 1)? `<button type="button" class="btn btn-success waves-effect waves-light" onclick= "showConfirmDeleteSeller('${data._id}')">Delete Seller</button>` :
+            `<button type="button" class="btn btn-success waves-effect waves-light" onclick = "showConfirmAddSeller('${data._id}')">Add Seller </button>`} `);
+        }
+    })
 }
