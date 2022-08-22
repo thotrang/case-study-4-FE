@@ -1,12 +1,20 @@
-const API_URL = "http://localhost:3000";
+const API_URL = 'http://localhost:3000';
+let token = JSON.parse(localStorage.getItem('accessToken'));
 let totalProduct = 0;
-$(function () {
-    getProductList();
-})
+if (!token) {
+    location.href = 'login.html'
+} else {
+    $(function () {
+        getProductList();
+    })
+}
 
 function getProductList() {
     $.ajax({
         type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token.token
+        },
         url: `${API_URL}/stores`,
         success: function (data) {
             totalProduct = data.length;
@@ -77,7 +85,8 @@ function searchProduct() {
         type: 'GET',
         url: `${API_URL}/stores/search?name=${name}`,
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token.token
         },
         success: function (data) {
             // console.log(data)
@@ -113,6 +122,10 @@ function showConFirmDelete(id) {
 function deleteProduct(id) {
     $.ajax({
         type: 'DELETE',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token.token
+        },
         url: `${API_URL}/stores/${id}`,
         success: function () {
             Swal.fire(
@@ -135,27 +148,50 @@ function resetForm() {
 }
 
 function createProduct() {
-    let name = $('#name').val();
-    let address = $('#address').val();
-    let userid = $('#userid').val();
-    let image = $('#image').val()
-    let store = {
-        name: name,
-        address: address,
-        userid: userid,
-        image: image
+    const firebaseConfig = {
+        apiKey: "AIzaSyAVrwPwJvJvn7R0a6ehu33geRA6SRuyNxk",
+        authDomain: "myproject-94b76.firebaseapp.com",
+        projectId: "myproject-94b76",
+        storageBucket: "myproject-94b76.appspot.com",
+        messagingSenderId: "378221595148",
+        appId: "1:378221595148:web:6f684d195ba7d8c320bc29",
+        measurementId: "G-7M2JF7YNB9"
     };
+    firebase.initializeApp(firebaseConfig);
 
-    $.ajax({
-        type: 'POST',
-        url: `${API_URL}/stores`,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(store),
-        success: function (data) {
-            totalProduct++;
-            let html = `<tr id="${data._id}">
+    const ref = firebase.storage().ref();
+    const file = document.querySelector("#photo").files[0];
+    const nameImage = +new Date() + "-" + file.name;
+    const metadata = {
+        contentType: file.type
+    };
+    const task = ref.child(nameImage).put(file, metadata);
+    task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+            console.log(url);
+            let name = $('#name').val();
+            let address = $('#address').val();
+            let userid = $('#userid').val();
+            let image = $('#image').val()
+            let store = {
+                name: name,
+                address: address,
+                userid: userid,
+                image: url
+            };
+            console.log(store)
+            $.ajax({
+                type: 'POST',
+                url: `${API_URL}/stores`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token.token
+                },
+                data: JSON.stringify(store),
+                success: function (data) {
+                    totalProduct++;
+                    let html = `<tr id="${data._id}">
             <td>${totalProduct}</td>
             <td>${data.name}</td>
             <td>${data.address}</td>
@@ -169,11 +205,14 @@ function createProduct() {
             </td>
             <td><button class="btn btn-danger" onclick="showConFirmDelete('${data._id}')">Delete</button></td>
         </tr>`
-            $('#products').append(html);
-            resetForm();
+                    $('#products').append(html);
+                    resetForm();
 
-        }
-    })
+                }
+            })
+        })
+        .catch(console.error);
+
 }
 
 function showCreateForm() {
@@ -209,7 +248,8 @@ function updateProduct(id) {
         url: `${API_URL}/stores/${id}`,
         data: JSON.stringify(product),
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token.token
         },
         success: function (data) {
             let html = `<tr id="${data._id}">
@@ -239,9 +279,13 @@ function updateProduct(id) {
 
 
 function getProduct(id) {
-    alert(id)
+    location.href = ("../cozastore-master/product-detail.html")
     $.ajax({
         type: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token.token
+        },
         url: `${API_URL}/stores/detail/${id}`,
         success: function (data) {
             console.log(data)
@@ -249,7 +293,28 @@ function getProduct(id) {
             $('#address').val(data.address);
             $('#userid').val(data.userid);
             $('#image').val(data.image);
+            displayList(data)
         }
     })
 
 }
+
+function addToCart(){
+    let user = $('#user').val();
+    let items = $('#items').val();
+    let status = $('#status').val();
+    let cart = {
+        user: user,
+        items: [],
+        status: status
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: `${API_URL}/carts`,
+
+    })
+
+
+}
+
