@@ -45,7 +45,7 @@ function getProductList() {
                     <td>${data[i].name}</td>
                     <td>${data[i].price}</td>
                     <td>${data[i].amount}</td>
-                    <td><img src="${data[i].image}" alt="" width="38" height="36"></td>
+                    <td><img src="${data[i].image}" alt="" width="30" height="32"></td>
                     <td>${data[i].category ? data[i].category[0].name : ''}</td>
                     <td>
                     <button type="button" onclick="showUpdateForm('${data[i]._id}')" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
