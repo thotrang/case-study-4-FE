@@ -220,7 +220,7 @@ function getSellerList() {
             for (let i = 0; i < data.length; i++) {
                 body += `<tr id="${data[i]._id}">
         <td>${i + 1}</td>
-        <td><img src="${data[i].avatar}" alt="table-user" class="mr-2 rounded-circle">
+        <td><img width="45px" src="${data[i].avatar}" alt="table-user" class="mr-2 rounded-circle">
         <a href="#" class="text-body font-weight-semibold">${data[i].name}</a>
         </td>
         <td>${data[i].username}</td>
