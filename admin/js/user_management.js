@@ -96,7 +96,6 @@ function getUser(id) {
         },
         success: function (data) {
             let title = 'User Profile';
-            let edit = 'Edit MyProfile';
             let body = `<div class="col-12">
             <div class="card-box">
                 <div class="row">
@@ -132,12 +131,8 @@ function getUser(id) {
                 <!-- end row -->
             </div> <!-- end card-->
         </div>`;
-            let update = `<button type="submit" class="btn btn-success waves-effect waves-light" onclick="update('${data._id}')">Save</button>
-        <button type="button" class="btn btn-danger waves-effect waves-light" data-dismiss="modal">Exit</button>`
             $('#title').html(title);
             $('#body').html(body);
-            $('#update').html(update);
-            $('#editHTML').html(edit);
         }
     })
 }
@@ -300,50 +295,50 @@ function update(id) {
     let avatar = $('#avatar').val();
     let password = $('#password').val()
 
-    // const firebaseConfig = {
-    //     apiKey: "AIzaSyCHVJ3RokpI5aQ_NDuzqGCMJDnX8MvQIus",
-    //     authDomain: "case4-6dbf8.firebaseapp.com",
-    //     projectId: "case4-6dbf8",
-    //     storageBucket: "case4-6dbf8.appspot.com",
-    //     messagingSenderId: "1068828921653",
-    //     appId: "1:1068828921653:web:e92849f20febb73825867c",
-    //     measurementId: "G-T3589W1X49"
-    // };
-    // // Initialize Firebase
-    // firebase.initializeApp(firebaseConfig);
-    // console.log(firebase);
-    // const ref = firebase.storage().ref();
-    // const file = document.querySelector("#avatar").files[0];
-    // const nameImage = +new Date() + "-" + file.name;
-    // const metadata = {
-    //     contentType: file.type
-    // };
-    // const task = ref.child(nameImage).put(file, metadata);
-    // task
-    //     .then(snapshot => snapshot.ref.getDownloadURL())
-    //     .then(url => {
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHVJ3RokpI5aQ_NDuzqGCMJDnX8MvQIus",
+        authDomain: "case4-6dbf8.firebaseapp.com",
+        projectId: "case4-6dbf8",
+        storageBucket: "case4-6dbf8.appspot.com",
+        messagingSenderId: "1068828921653",
+        appId: "1:1068828921653:web:e92849f20febb73825867c",
+        measurementId: "G-T3589W1X49"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    console.log(firebase);
+    const ref = firebase.storage().ref();
+    const file = document.querySelector("#avatar").files[0];
+    const nameImage = +new Date() + "-" + file.name;
+    const metadata = {
+        contentType: file.type
+    };
+    const task = ref.child(nameImage).put(file, metadata);
+    task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
 
-    let updateUser = {
-        name: name,
-        email: email,
-        address: address,
-        avatar: avatar,
-        password: password
-    }
-    console.log('ok');
-    $.ajax({
+            let updateUser = {
+                name: name,
+                email: email,
+                address: address,
+                avatar: url,
+                password: password
+            }
+            console.log('ok');
+            $.ajax({
 
-        type: "PUT",
-        url: `${API_URL}/admin/users/${id}`,
-        headers: {
-            'Authorization': 'Bearer ' + token.token,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(updateUser),
+                type: "PUT",
+                url: `${API_URL}/admin/users/${id}`,
+                headers: {
+                    'Authorization': 'Bearer ' + token.token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(updateUser),
 
-        success: function (data) {
-            let body = `<div class="col-12">
+                success: function (data) {
+                    let body = `<div class="col-12">
                     <div class="card-box">
                         <div class="row">
                             <div class="col-lg-5">
@@ -372,17 +367,17 @@ function update(id) {
                         <!-- end row -->
                     </div> <!-- end card-->
                 </div>`
-            $('#body').html(body);
-            Swal.fire(
-                'Edit MyProfile!',
-                'Accout has been Edit.',
-                'success'
-            )
-        }
-    })
+                    $('#body').html(body);
+                    Swal.fire(
+                        'Edit MyProfile!',
+                        'Accout has been Edit.',
+                        'success'
+                    )
+                }
+            })
 
-    // })
-    // .catch(console.error);
+        })
+        .catch(console.error);
 
 
 }
