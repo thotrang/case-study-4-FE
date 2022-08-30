@@ -58,6 +58,7 @@
                         <label class="form-label" for="password">Password</label>
                         <input type="password" class="form-control" id="password" required />
                       </div>
+                      <div style="display:none" id="validate"><span> Mật khẩu không đúng định dạng</span></div>
                     </div>
 
                     <div class="d-flex flex-row align-items-center mb-4">
@@ -153,7 +154,7 @@
                 Swal.fire('Nhập lại mật khẩu không chuẩn')
               }
             } else {
-              Swal.fire('mat khau khong dung dinh dang')
+              document.getElementById("validate").style.display = 'block'
             }
           } else {
             Swal.fire('Vui lòng điền đầy đủ thông tin')
